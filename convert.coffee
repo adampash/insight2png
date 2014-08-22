@@ -12,11 +12,11 @@ else
     width: 800
     height: 500
 
+  # below required for typekit
   page.settings.userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_2) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.57 Safari/537.17"
   page.customHeaders = Referer: url
 
   page.includeJs "https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"
-  page.includeJs "https://use.typekit.net/xzh8ady.js"
 
   page.open url, (status) ->
     if status isnt "success"
