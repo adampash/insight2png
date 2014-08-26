@@ -30,11 +30,22 @@ else
         console.log("#{(end-start)/1000} seconds")
         phantom.exit 0
         return
-      ), 1000
+      ), 4000
     return
 
 
 renderPage = (page, filename) ->
+  page.evaluate ->
+    # this is for smoothing over on xvfb; don't use if don't have to
+    $('.user-name, .user-text').css('font-size', '14.25px')
+    $('.panel-body-inner p').css('font-size', '14.25px')
+    $('.panel-title').css('font-weight', 'bold')
+    $('.panel-subtitle').css('font-weight', 'lighter')
+      .css('font-size', '14.5px')
+    $('body').css('font', 'helvetica')
+    # $('.panel-body-inner').css('font-size', '16px')
+    $('.insight-metadata').css('font-size', '12.5px')
+    $('.tweet-action.tweet-action-permalink').css('font-size', '12.5px')
   offset = page.evaluate ->
     $('.insight').offset()
 
