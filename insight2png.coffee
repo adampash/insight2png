@@ -5,6 +5,7 @@ if system.args.length < 2 or system.args.length > 3
   console.log "Usage: insight2png URL filename"
   phantom.exit 1
 else
+  start = new Date()
   page = webpage.create()
   url = system.args[1]
   filename = system.args[2]
@@ -25,9 +26,11 @@ else
     else
       window.setTimeout (->
         renderPage page, filename
+        end = new Date()
+        console.log("#{(end-start)/1000} seconds")
         phantom.exit 0
         return
-      ), 200
+      ), 1000
     return
 
 
@@ -37,6 +40,7 @@ renderPage = (page, filename) ->
 
   crop = page.evaluate ->
     insight = document.querySelector('.insight')
+    # insight = document.querySelectorAll('.insight')[8]
     offset =
       height: insight.offsetHeight
       width: insight.offsetWidth
@@ -48,4 +52,4 @@ renderPage = (page, filename) ->
     height: crop.height
 
   console.log 'rendering page'
-  page.render(filename)
+  page.render("screenshots/#{filename}")
