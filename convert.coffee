@@ -25,29 +25,11 @@ else
     else
       window.setTimeout (->
         renderPage page, filename
-        # page.render filename
         phantom.exit 0
         return
       ), 200
     return
 
-
-
-
-# page = require('webpage').create()
-# url =  'https://adampash.thinkup.com/?u=adampash&n=twitter&d=2014-08-22&s=posts_on_this_day_popular_flashback'
-# 
-# page.viewportSize =
-#   width: 800
-#   height: 500
-# 
-# page.settings.userAgent = 'Mozilla/5.0 (Windows NT 6.0; WOW64) AppleWebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.75 Safari/535.7'
-# page.customHeaders = 'Referer': "https://thinkup.com"
-# 
-# page.includeJs "https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"
-# page.includeJs "https://use.typekit.net/xzh8ady.js"
-# 
-# page.open url, ->
 
 renderPage = (page, filename) ->
   offset = page.evaluate ->
