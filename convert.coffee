@@ -49,4 +49,3 @@ renderPage = (page, filename) ->
 
   console.log 'rendering page'
   page.render(filename)
-  # phantom.exit()
