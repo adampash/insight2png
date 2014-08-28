@@ -62,7 +62,7 @@ module.exports = insight2png =
     console.log 'rendering page'
     page.render("screenshots/#{filename}")
 
-unless system.args[0] is 'server.coffee'
+unless system.args[0].match /server\.coffee/
   if system.args.length < 2 or system.args.length > 3
     console.log "Usage: insight2png URL filename"
     slimer.exit 1
@@ -70,4 +70,3 @@ unless system.args[0] is 'server.coffee'
     url = system.args[1]
     filename = system.args[2]
     insight2png.run(url, filename)
-
