@@ -21,10 +21,10 @@ module.exports = insight2png =
         slimer.exit 1
       else
         # window.setTimeout (->
-        @renderPage page, filename
+        imgData = @renderPage page, filename
         end = new Date()
         console.log("#{(end-start)/1000} seconds")
-        return callback() if callback?
+        return callback("screenshots/#{filename}", imgData) if callback?
         slimer.exit 0
         return
         # ), 4000
@@ -61,6 +61,7 @@ module.exports = insight2png =
 
     console.log 'rendering page'
     page.render("screenshots/#{filename}")
+    page.renderBase64('png')
 
 unless system.args[0].match /server\.coffee/
   if system.args.length < 2 or system.args.length > 3
