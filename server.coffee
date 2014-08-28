@@ -2,8 +2,8 @@ server = require("webserver").create()
 insight2png = require 'insight2png'
 fs = require('fs')
 
-console.log 'server listening on 8083'
-server.listen 8083, (request, response) ->
+console.log 'server listening on 8080'
+server.listen 8080, (request, response) ->
   if request.url.match /^\/insight/
     url = request.queryString.split('url=')[1]
     insight2png.run url, "#{uniqueId()}.png", (img, imgData) ->
