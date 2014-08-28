@@ -14,4 +14,4 @@ Point browser to:
 http://localhost:8080/insight.png?url=<full_url_of_insight>
 ```
 
-And get an image!
+And get an image.
