@@ -3,7 +3,7 @@ system = require("system")
 
 if system.args.length < 2 or system.args.length > 3
   console.log "Usage: insight2png URL filename"
-  phantom.exit 1
+  slimer.exit 1
 else
   start = new Date()
   page = webpage.create()
@@ -20,13 +20,13 @@ else
   page.open url, (status) ->
     if status isnt "success"
       console.log "Unable to open URL."
-      phantom.exit 1
+      slimer.exit 1
     else
       # window.setTimeout (->
       renderPage page, filename
       end = new Date()
       console.log("#{(end-start)/1000} seconds")
-      phantom.exit 0
+      slimer.exit 0
       return
       # ), 4000
     return
