@@ -17,20 +17,18 @@ else
   page.settings.userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_2) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.57 Safari/537.17"
   page.customHeaders = Referer: url
 
-  page.includeJs "https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"
-
   page.open url, (status) ->
     if status isnt "success"
       console.log "Unable to open URL."
       phantom.exit 1
     else
-      window.setTimeout (->
-        renderPage page, filename
-        end = new Date()
-        console.log("#{(end-start)/1000} seconds")
-        phantom.exit 0
-        return
-      ), 4000
+      # window.setTimeout (->
+      renderPage page, filename
+      end = new Date()
+      console.log("#{(end-start)/1000} seconds")
+      phantom.exit 0
+      return
+      # ), 4000
     return
 
 
