@@ -41,7 +41,7 @@ module.exports = insight2png =
             if url.indexOf('visualization') > -1 and
             url.match(/\.js$/) and resource.stage is 'end'
               console.log 'chart is close'
-              setTimeout getImage, 1000
+              setTimeout getImage, 1100
         else
           getImage()
 
