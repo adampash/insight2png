@@ -1,9 +1,11 @@
+#!/usr/bin/env slimerjs
+
 webpage = require("webpage")
 system = require("system")
-
+fs = require("fs")
 
 module.exports = insight2png =
-  run: (url, filename, callback) ->
+  run: (url, filename, callbacks={}) ->
     start = new Date()
     page = webpage.create()
 
@@ -18,17 +20,13 @@ module.exports = insight2png =
     page.open url, (status) =>
       if status isnt "success"
         console.log "Unable to open URL."
+        return callbacks.error("Unable to open URL") if callbacks.error?
         slimer.exit 1
       else
-        # window.setTimeout (->
         imgData = @renderPage page, filename
-        end = new Date()
-        console.log("#{(end-start)/1000} seconds")
-        return callback("screenshots/#{filename}", imgData) if callback?
+        @logTime start
+        return callbacks.success(imgData) if callbacks.success?
         slimer.exit 0
-        return
-        # ), 4000
-      return
 
 
   renderPage: (page, filename) ->
@@ -62,6 +60,34 @@ module.exports = insight2png =
     console.log 'rendering page'
     page.render("screenshots/#{filename}")
     page.renderBase64('png')
+
+  readFile: (filename, callbacks={}) ->
+    start = new Date()
+    page = webpage.create()
+    url = "#{fs.workingDirectory}/screenshots/#{filename}.png"
+    page.open url, (status) =>
+      if status isnt "success"
+        return callback.error("Unable to open URL") if callbacks.error?
+        slimer.exit 1
+      else
+        size = page.evaluate ->
+          insight = document.querySelector('.decoded')
+          offset =
+            height: insight.offsetHeight
+            width: insight.offsetWidth
+        page.viewportSize =
+          width: size.width
+          height: size.height
+
+        imgData = page.renderBase64('png')
+        @logTime(start)
+        return callbacks.success(imgData) if callbacks.success?
+        slimer.exit 0
+        return
+
+  logTime: (start) ->
+    end = new Date()
+    console.log("#{(end-start)/1000} seconds\n")
 
 unless system.args[0].match /server\.coffee/
   if system.args.length < 2 or system.args.length > 3
