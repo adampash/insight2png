@@ -6,8 +6,18 @@ fs = require("fs")
 
 module.exports = insight2png =
   run: (url, filename, response, callbacks={}) ->
+    getImage = =>
+      imgData = @renderPage page, filename
+      @logTime start
+      return callbacks.success(imgData, response) if callbacks.success?
+      slimer.exit 0
+
     start = new Date()
     page = webpage.create()
+
+    # below for debugging
+    page.onAlert = (text) ->
+      console.log("Alert: " +text);
 
     page.viewportSize =
       width: 800
@@ -23,10 +33,17 @@ module.exports = insight2png =
         return callbacks.error("Unable to open URL") if callbacks.error?
         slimer.exit 1
       else
-        imgData = @renderPage page, filename
-        @logTime start
-        return callbacks.success(imgData, response) if callbacks.success?
-        slimer.exit 0
+        vis = page.evaluate ->
+          google.visualization
+        if vis?
+          page.onResourceReceived = (resource) =>
+            url = resource.url
+            if url.indexOf('visualization') > -1 and
+            url.match(/\.js$/) and resource.stage is 'end'
+              console.log 'chart is close'
+              setTimeout getImage, 1000
+        else
+          getImage()
 
 
   renderPage: (page, filename) ->
@@ -41,6 +58,7 @@ module.exports = insight2png =
       # $('.panel-body-inner').css('font-size', '16px')
       $('.insight-metadata').css('font-size', '12.5px')
       $('.tweet-action.tweet-action-permalink').css('font-size', '12.5px')
+
     offset = page.evaluate ->
       $('.insight').offset()
 
@@ -52,7 +70,7 @@ module.exports = insight2png =
       width: crop.width
       height: crop.height
 
-    console.log 'rendering page'
+    console.log 'Rendering page'
     page.render("screenshots/#{filename}")
     page.renderBase64('png')
 

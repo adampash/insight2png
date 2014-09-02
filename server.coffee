@@ -34,7 +34,7 @@ writeImageToClient = (response, imgData) ->
   response.close()
 
 
-# fast-hashing function pulled from
+# quick hashing function pulled from
 # http://stackoverflow.com/questions/7616461/
 hashCode = (s)->
   s.split("").reduce (a,b) ->
