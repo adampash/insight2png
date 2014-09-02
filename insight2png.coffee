@@ -5,7 +5,7 @@ system = require("system")
 fs = require("fs")
 
 module.exports = insight2png =
-  run: (url, filename, callbacks={}) ->
+  run: (url, filename, response, callbacks={}) ->
     start = new Date()
     page = webpage.create()
 
@@ -13,9 +13,9 @@ module.exports = insight2png =
       width: 800
       height: 500
 
-    # below required for typekit
-    page.settings.userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_2) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.57 Safari/537.17"
-    page.customHeaders = Referer: url
+    # below required for typekit (maybe not? commenting out to test)
+    # page.settings.userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_2) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.57 Safari/537.17"
+    # page.customHeaders = Referer: url
 
     page.open url, (status) =>
       if status isnt "success"
@@ -25,7 +25,7 @@ module.exports = insight2png =
       else
         imgData = @renderPage page, filename
         @logTime start
-        return callbacks.success(imgData) if callbacks.success?
+        return callbacks.success(imgData, response) if callbacks.success?
         slimer.exit 0
 
 
@@ -44,12 +44,7 @@ module.exports = insight2png =
     offset = page.evaluate ->
       $('.insight').offset()
 
-    crop = page.evaluate ->
-      insight = document.querySelector('.insight')
-      # insight = document.querySelectorAll('.insight')[8]
-      offset =
-        height: insight.offsetHeight
-        width: insight.offsetWidth
+    crop = @getImageDimensions page, '.insight'
 
     page.clipRect =
       top: offset.top
@@ -61,7 +56,7 @@ module.exports = insight2png =
     page.render("screenshots/#{filename}")
     page.renderBase64('png')
 
-  readFile: (filename, callbacks={}) ->
+  readFile: (filename, response, callbacks={}) ->
     start = new Date()
     page = webpage.create()
     url = "#{fs.workingDirectory}/screenshots/#{filename}.png"
@@ -70,20 +65,24 @@ module.exports = insight2png =
         return callback.error("Unable to open URL") if callbacks.error?
         slimer.exit 1
       else
-        size = page.evaluate ->
-          insight = document.querySelector('.decoded')
-          offset =
-            height: insight.offsetHeight
-            width: insight.offsetWidth
+        size = @getImageDimensions page, '.decoded'
         page.viewportSize =
           width: size.width
           height: size.height
 
         imgData = page.renderBase64('png')
         @logTime(start)
-        return callbacks.success(imgData) if callbacks.success?
+        return callbacks.success(imgData, response) if callbacks.success?
         slimer.exit 0
         return
+
+  getImageDimensions: (page, selector) ->
+    size = page.evaluate (selector) ->
+      insight = document.querySelector(selector)
+      offset =
+        height: insight.offsetHeight
+        width: insight.offsetWidth
+    , selector
 
   logTime: (start) ->
     end = new Date()

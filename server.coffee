@@ -11,23 +11,21 @@ server.listen 8080, (request, response) ->
     hashedUrl = hashCode(url)
     if fs.exists "screenshots/#{hashedUrl}.png"
       console.log "Screenshot exists; returning image"
-      insight2png.readFile hashedUrl,
-        success: (imgData) ->
-          writeImageToClient response, imgData
-        error: (error) ->
-          console.log "Something went wrong: #{error}"
+      insight2png.readFile hashedUrl, response, handleImageResponse
     else
       console.log "First request; generating #{hashedUrl}.png"
-      insight2png.run url, "#{hashedUrl}.png",
-        success: (imgData) ->
-          writeImageToClient response, imgData
-        error: (error) ->
-          console.log "Something went wrong: #{error}"
+      insight2png.run url, "#{hashedUrl}.png", response, handleImageResponse
 
   else
     response.statusCode = 200
     response.write('<!DOCTYPE html>\n<html><head><meta charset="utf-8"><title>hello world</title></head><body>nothing!</body></html>')
     response.close()
+
+handleImageResponse =
+  success: (imgData, response) ->
+    writeImageToClient response, imgData
+  error: (error) ->
+    console.log "Something went wrong: #{error}"
 
 writeImageToClient = (response, imgData) ->
   response.writeHead(200, 'Content-Type': 'image/png' )
