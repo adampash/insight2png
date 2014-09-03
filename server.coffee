@@ -1,11 +1,20 @@
 #!/usr/bin/env slimerjs
 
+system = require("system")
 server = require("webserver").create()
 insight2png = require 'insight2png'
 fs = require('fs')
 
-console.log 'Server is running'
-server.listen 8080, (request, response) ->
+
+if system.args.length < 2 or system.args.length > 3
+  domain = "localhost"
+  port = 8080
+else
+  domain = system.args[1]
+  port = system.args[2]
+
+console.log "Server is running on #{domain}:#{port}"
+server.listen "#{domain}:#{port}", (request, response) ->
   if request.url.match /^\/insight/
     url = request.queryString.split('url=')[1]
     hashedUrl = hashCode(url)
