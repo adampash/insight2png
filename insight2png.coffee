@@ -29,6 +29,14 @@ module.exports = insight2png =
     # page.settings.userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_2) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.57 Safari/537.17"
     # page.customHeaders = Referer: url
 
+    # this callback is only triggered
+    # for insights with visualizations
+    page.onCallback = (arg) ->
+      clearTimeout chartTimeout
+      console.log arg + "Visualization loaded"
+      getImage()
+    chartTimeout = null
+
     page.open url, (status) =>
       if status isnt "success"
         console.log "Unable to open URL."
@@ -38,12 +46,7 @@ module.exports = insight2png =
         vis = page.evaluate ->
           google.visualization
         if vis?
-          page.onResourceReceived = (resource) =>
-            url = resource.url
-            if url.indexOf('visualization') > -1 and
-            url.match(/\.js$/) and resource.stage is 'end'
-              console.log 'chart is close'
-              setTimeout getImage, 1100
+          chartTimeout = setTimeout getImage, 6e3
         else
           getImage()
 
