@@ -5,6 +5,7 @@ server = require("webserver").create()
 insight2png = require 'insight2png'
 fs = require('fs')
 
+TU_REGEX = /^https:\/\/.+\.thinkup\.com\/\?u=/
 
 if system.args.length < 2 or system.args.length > 3
   domain = "localhost"
@@ -19,7 +20,7 @@ server.listen "#{domain}:#{port}", (request, response) ->
   start = new Date()
   if request.url.match /^\/insight/
     url = request.queryString.split('url=')[1]
-    return fourOhFour(response, url) unless url? and url.match /^https:\/\/.+\.thinkup\.com\//
+    return fourOhFour(response, url) unless url? and url.match TU_REGEX
     hashedUrl = hashCode(url)
     if fs.exists "screenshots/#{hashedUrl}.png"
       console.log "Screenshot exists; returning image"
@@ -34,8 +35,9 @@ server.listen "#{domain}:#{port}", (request, response) ->
 handleImageResponse =
   success: (imgData, response) ->
     writeImageToClient response, imgData
-  error: (error) ->
+  error: (error, response) ->
     console.log "Something went wrong: #{error}"
+    fourOhFour(response, error)
 
 writeImageToClient = (response, imgData) ->
   response.writeHead(200, 'Content-Type': 'image/png' )

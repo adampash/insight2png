@@ -7,10 +7,12 @@ fs = require("fs")
 module.exports = insight2png =
   run: (url, filename, response, callbacks={}) ->
     getImage = =>
-      imgData = @renderPage page, filename
-      # @logTime start
-      return callbacks.success(imgData, response) if callbacks.success?
-      slimer.exit 0
+      try
+        imgData = @renderPage page, filename
+        return callbacks.success(imgData, response) if callbacks.success?
+        slimer.exit 0
+      catch error
+        return callbacks.error(error, response) if callbacks.error?
 
     start = new Date()
     page = webpage.create()
@@ -30,7 +32,7 @@ module.exports = insight2png =
     page.open url, (status) =>
       if status isnt "success"
         console.log "Unable to open URL."
-        return callbacks.error("Unable to open URL") if callbacks.error?
+        return callbacks.error("Unable to open URL", response) if callbacks.error?
         slimer.exit 1
       else
         vis = page.evaluate ->
@@ -80,23 +82,27 @@ module.exports = insight2png =
     url = "#{fs.workingDirectory}/screenshots/#{filename}.png"
     page.open url, (status) =>
       if status isnt "success"
-        return callback.error("Unable to open URL") if callbacks.error?
+        return callback.error("Unable to open URL", response) if callbacks.error?
         slimer.exit 1
       else
-        size = @getImageDimensions page, '.decoded'
-        page.viewportSize =
-          width: size.width
-          height: size.height
+        try
+          size = @getImageDimensions page, '.decoded'
+          page.viewportSize =
+            width: size.width
+            height: size.height
 
-        imgData = page.renderBase64('png')
-        # @logTime(start)
-        return callbacks.success(imgData, response) if callbacks.success?
-        slimer.exit 0
-        return
+          imgData = page.renderBase64('png')
+          # @logTime(start)
+          return callbacks.success(imgData, response) if callbacks.success?
+          slimer.exit 0
+          return
+        catch error
+          return callbacks.error(error, response) if callbacks.error?
 
   getImageDimensions: (page, selector) ->
     size = page.evaluate (selector) ->
       insight = document.querySelector(selector)
+      throw "Insight not found on page" unless insight?
       offset =
         height: insight.offsetHeight
         width: insight.offsetWidth
