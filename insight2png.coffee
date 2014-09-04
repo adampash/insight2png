@@ -8,7 +8,7 @@ module.exports = insight2png =
   run: (url, filename, response, callbacks={}) ->
     getImage = =>
       imgData = @renderPage page, filename
-      @logTime start
+      # @logTime start
       return callbacks.success(imgData, response) if callbacks.success?
       slimer.exit 0
 
@@ -89,7 +89,7 @@ module.exports = insight2png =
           height: size.height
 
         imgData = page.renderBase64('png')
-        @logTime(start)
+        # @logTime(start)
         return callbacks.success(imgData, response) if callbacks.success?
         slimer.exit 0
         return

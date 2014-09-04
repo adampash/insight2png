@@ -13,10 +13,13 @@ else
   domain = system.args[1]
   port = system.args[2]
 
-console.log "Server is running on #{domain}:#{port}"
+start = null
+console.log "Server is running on #{domain}:#{port}\n"
 server.listen "#{domain}:#{port}", (request, response) ->
+  start = new Date()
   if request.url.match /^\/insight/
     url = request.queryString.split('url=')[1]
+    return fourOhFour(response, url) unless url? and url.match /^https:\/\/.+\.thinkup\.com\//
     hashedUrl = hashCode(url)
     if fs.exists "screenshots/#{hashedUrl}.png"
       console.log "Screenshot exists; returning image"
@@ -26,9 +29,7 @@ server.listen "#{domain}:#{port}", (request, response) ->
       insight2png.run url, "#{hashedUrl}.png", response, handleImageResponse
 
   else
-    response.statusCode = 200
-    response.write('<!DOCTYPE html>\n<html><head><meta charset="utf-8"><title>hello world</title></head><body>nothing!</body></html>')
-    response.close()
+    fourOhFour(response)
 
 handleImageResponse =
   success: (imgData, response) ->
@@ -40,8 +41,22 @@ writeImageToClient = (response, imgData) ->
   response.writeHead(200, 'Content-Type': 'image/png' )
   response.setEncoding('binary')
   response.write(atob(imgData))
+  close(response, start)
+
+fourOhFour = (response, url="No url requested") ->
+  console.log "404:"
+  console.log "Requested url:"
+  console.log "#{url}"
+  response.statusCode = 404
+  response.write('<!DOCTYPE html>\n<html><head><meta charset="utf-8"><title>404</title></head><body>404: Resource not found</body></html>')
+  close(response, start)
+
+close = (response, start) ->
+  logTime(start)
   response.close()
 
+logTime = (start) ->
+  console.log("#{(new Date()-start)/1000} seconds\n")
 
 # quick hashing function pulled from
 # http://stackoverflow.com/questions/7616461/
