@@ -18,6 +18,4 @@ And get an image.
 
 # Fun:
 
-That's right, there's fun, too! Here's a bookmarklet to generate the image:
-
-[insight2image](javascript:(function(){var e;e=function(){return window.location.href="http://shares.thinkup.com/insight?url="+window.location.href},e()}).call(this);)
+That's right, there's fun, too! There's a bookmarklet to generate the image from an insight permalink. Unfortunately you can't embed javascript links in GitHub, but you can get it [here](http://files.adampash.com/thinkup/bookmarklet/).
