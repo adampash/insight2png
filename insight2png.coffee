@@ -31,9 +31,9 @@ module.exports = insight2png =
 
     # this callback is only triggered
     # for insights with visualizations
-    page.onCallback = (arg) ->
+    page.onCallback = ->
       clearTimeout chartTimeout
-      console.log arg + "Visualization loaded"
+      console.log "Visualization loaded"
       getImage()
     chartTimeout = null
 
