@@ -10,30 +10,26 @@ module.exports = class Insight2png
   run: (callbacks={}) ->
     getImage = =>
       try
-        imgData = @renderPage page, @filename
+        imgData = @renderPage @page, @filename
         return callbacks.success(imgData, @response) if callbacks.success?
         slimer.exit 0
       catch error
         return callbacks.error(error, @response) if callbacks.error?
 
     start = new Date()
-    page = webpage.create()
+    @page = webpage.create()
 
     # below for debugging
-    page.onAlert = (text) ->
+    @page.onAlert = (text) ->
       console.log("Alert: " +text);
 
-    page.viewportSize =
+    @page.viewportSize =
       width: 800
       height: 500
 
-    # below required for typekit (maybe not? commenting out to test)
-    # page.settings.userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_2) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.57 Safari/537.17"
-    # page.customHeaders = Referer: url
-
     # this callback is only triggered
     # for insights with visualizations
-    page.onCallback = ->
+    @page.onCallback = ->
       clearTimeout chartTimeout
       console.log "Visualization loaded"
       if @url.match /weekly_graph$/
@@ -45,13 +41,13 @@ module.exports = class Insight2png
 
     chartTimeout = null
 
-    page.open @url, (status) =>
+    @page.open @url, (status) =>
       if status isnt "success"
         console.log "Unable to open URL."
         return callbacks.error("Unable to open URL", @response) if callbacks.error?
         slimer.exit 1
       else
-        vis = page.evaluate ->
+        vis = @page.evaluate ->
           google.visualization
         if vis?
           chartTimeout = setTimeout getImage, 6e3
@@ -59,8 +55,8 @@ module.exports = class Insight2png
           getImage()
 
 
-  renderPage: (page) ->
-    page.evaluate ->
+  renderPage: ->
+    @page.evaluate ->
       # this is for smoothing over on xvfb; don't use if don't have to
       $('.user-name, .user-text').css('font-size', '14.25px')
       $('.panel-body-inner p').css('font-size', '14.25px')
@@ -72,12 +68,12 @@ module.exports = class Insight2png
       $('.insight-metadata').css('font-size', '12.5px')
       $('.tweet-action.tweet-action-permalink').css('font-size', '12.5px')
 
-    offset = page.evaluate ->
+    offset = @page.evaluate ->
       $('.insight').offset()
 
-    crop = @getImageDimensions page, '.insight'
+    crop = @getImageDimensions '.insight'
 
-    page.clipRect =
+    @page.clipRect =
       top: offset.top
       left: offset.left
       width: crop.width
@@ -85,25 +81,25 @@ module.exports = class Insight2png
 
     console.log 'Rendering page'
     console.log @filename
-    page.render("screenshots/#{@filename}")
-    page.renderBase64('png')
+    @page.render("screenshots/#{@filename}")
+    @page.renderBase64('png')
 
   readFile: (callbacks={}) ->
     start = new Date()
-    page = webpage.create()
+    @page = webpage.create()
     @url = "#{fs.workingDirectory}/screenshots/#{@filename}"
-    page.open @url, (status) =>
+    @page.open @url, (status) =>
       if status isnt "success"
         return callback.error("Unable to open URL", @response) if callbacks.error?
         slimer.exit 1
       else
         try
-          size = @getImageDimensions page, '.decoded'
-          page.viewportSize =
+          size = @getImageDimensions '.decoded'
+          @page.viewportSize =
             width: size.width
             height: size.height
 
-          imgData = page.renderBase64('png')
+          imgData = @page.renderBase64('png')
           # @logTime(start)
           return callbacks.success(imgData, @response) if callbacks.success?
           slimer.exit 0
@@ -111,8 +107,8 @@ module.exports = class Insight2png
         catch error
           return callbacks.error(error, @response) if callbacks.error?
 
-  getImageDimensions: (page, selector) ->
-    size = page.evaluate (selector) ->
+  getImageDimensions: (selector) ->
+    size = @page.evaluate (selector) ->
       insight = document.querySelector(selector)
       throw "Insight not found on page" unless insight?
       offset =

@@ -16,7 +16,7 @@
     }
 
     Insight2png.prototype.run = function(callbacks) {
-      var chartTimeout, getImage, page, start;
+      var chartTimeout, getImage, start;
       if (callbacks == null) {
         callbacks = {};
       }
@@ -24,7 +24,7 @@
         return function() {
           var error, imgData;
           try {
-            imgData = _this.renderPage(page, _this.filename);
+            imgData = _this.renderPage(_this.page, _this.filename);
             if (callbacks.success != null) {
               return callbacks.success(imgData, _this.response);
             }
@@ -38,15 +38,15 @@
         };
       })(this);
       start = new Date();
-      page = webpage.create();
-      page.onAlert = function(text) {
+      this.page = webpage.create();
+      this.page.onAlert = function(text) {
         return console.log("Alert: " + text);
       };
-      page.viewportSize = {
+      this.page.viewportSize = {
         width: 800,
         height: 500
       };
-      page.onCallback = function() {
+      this.page.onCallback = function() {
         clearTimeout(chartTimeout);
         console.log("Visualization loaded");
         if (this.url.match(/weekly_graph$/)) {
@@ -58,7 +58,7 @@
         }
       };
       chartTimeout = null;
-      return page.open(this.url, (function(_this) {
+      return this.page.open(this.url, (function(_this) {
         return function(status) {
           var vis;
           if (status !== "success") {
@@ -68,7 +68,7 @@
             }
             return slimer.exit(1);
           } else {
-            vis = page.evaluate(function() {
+            vis = _this.page.evaluate(function() {
               return google.visualization;
             });
             if (vis != null) {
@@ -81,9 +81,9 @@
       })(this));
     };
 
-    Insight2png.prototype.renderPage = function(page) {
+    Insight2png.prototype.renderPage = function() {
       var crop, offset;
-      page.evaluate(function() {
+      this.page.evaluate(function() {
         $('.user-name, .user-text').css('font-size', '14.25px');
         $('.panel-body-inner p').css('font-size', '14.25px');
         $('.panel-title').css('font-weight', 'bold');
@@ -92,11 +92,11 @@
         $('.insight-metadata').css('font-size', '12.5px');
         return $('.tweet-action.tweet-action-permalink').css('font-size', '12.5px');
       });
-      offset = page.evaluate(function() {
+      offset = this.page.evaluate(function() {
         return $('.insight').offset();
       });
-      crop = this.getImageDimensions(page, '.insight');
-      page.clipRect = {
+      crop = this.getImageDimensions('.insight');
+      this.page.clipRect = {
         top: offset.top,
         left: offset.left,
         width: crop.width,
@@ -104,19 +104,19 @@
       };
       console.log('Rendering page');
       console.log(this.filename);
-      page.render("screenshots/" + this.filename);
-      return page.renderBase64('png');
+      this.page.render("screenshots/" + this.filename);
+      return this.page.renderBase64('png');
     };
 
     Insight2png.prototype.readFile = function(callbacks) {
-      var page, start;
+      var start;
       if (callbacks == null) {
         callbacks = {};
       }
       start = new Date();
-      page = webpage.create();
+      this.page = webpage.create();
       this.url = "" + fs.workingDirectory + "/screenshots/" + this.filename;
-      return page.open(this.url, (function(_this) {
+      return this.page.open(this.url, (function(_this) {
         return function(status) {
           var error, imgData, size;
           if (status !== "success") {
@@ -126,12 +126,12 @@
             return slimer.exit(1);
           } else {
             try {
-              size = _this.getImageDimensions(page, '.decoded');
-              page.viewportSize = {
+              size = _this.getImageDimensions('.decoded');
+              _this.page.viewportSize = {
                 width: size.width,
                 height: size.height
               };
-              imgData = page.renderBase64('png');
+              imgData = _this.page.renderBase64('png');
               if (callbacks.success != null) {
                 return callbacks.success(imgData, _this.response);
               }
@@ -147,9 +147,9 @@
       })(this));
     };
 
-    Insight2png.prototype.getImageDimensions = function(page, selector) {
+    Insight2png.prototype.getImageDimensions = function(selector) {
       var size;
-      return size = page.evaluate(function(selector) {
+      return size = this.page.evaluate(function(selector) {
         var insight, offset;
         insight = document.querySelector(selector);
         if (insight == null) {
