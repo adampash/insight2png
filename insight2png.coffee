@@ -34,7 +34,9 @@ module.exports = insight2png =
     page.onCallback = ->
       clearTimeout chartTimeout
       console.log "Visualization loaded"
-      getImage()
+      setTimeout ->
+        getImage()
+      , 800
     chartTimeout = null
 
     page.open url, (status) =>
