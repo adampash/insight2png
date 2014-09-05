@@ -20,6 +20,7 @@ server.listen "#{domain}:#{port}", (request, response) ->
   response.start = new Date()
   if request.url.match /^\/insight/
     url = request.queryString.split('url=')[1]
+    console.log url
     return fourOhFour(response, url) unless url? and url.match TU_REGEX
     hashedUrl = hashCode(url)
     if fs.exists "screenshots/#{hashedUrl}.png"
