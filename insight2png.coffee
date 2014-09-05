@@ -34,9 +34,13 @@ module.exports = insight2png =
     page.onCallback = ->
       clearTimeout chartTimeout
       console.log "Visualization loaded"
-      setTimeout ->
+      if url.match /weekly_graph$/
+        setTimeout ->
+          getImage()
+        , 1500
+      else
         getImage()
-      , 800
+
     chartTimeout = null
 
     page.open url, (status) =>
