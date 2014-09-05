@@ -16,6 +16,7 @@ else
 
 console.log "Server is running on #{domain}:#{port}\n"
 server.listen "#{domain}:#{port}", (request, response) ->
+  return if request.url is '/favicon.ico'
   response.start = new Date()
   if request.url.match /^\/insight/
     url = request.queryString.split('url=')[1]
