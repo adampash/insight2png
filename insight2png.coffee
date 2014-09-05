@@ -4,15 +4,17 @@ webpage = require("webpage")
 system = require("system")
 fs = require("fs")
 
-module.exports = insight2png =
-  run: (url, filename, response, callbacks={}) ->
+module.exports = class Insight2png
+  constructor: (@url, @filename, @response) ->
+
+  run: (callbacks={}) ->
     getImage = =>
       try
-        imgData = @renderPage page, filename
-        return callbacks.success(imgData, response) if callbacks.success?
+        imgData = @renderPage page, @filename
+        return callbacks.success(imgData, @response) if callbacks.success?
         slimer.exit 0
       catch error
-        return callbacks.error(error, response) if callbacks.error?
+        return callbacks.error(error, @response) if callbacks.error?
 
     start = new Date()
     page = webpage.create()
@@ -34,7 +36,7 @@ module.exports = insight2png =
     page.onCallback = ->
       clearTimeout chartTimeout
       console.log "Visualization loaded"
-      if url.match /weekly_graph$/
+      if @url.match /weekly_graph$/
         setTimeout ->
           getImage()
         , 1500
@@ -43,10 +45,10 @@ module.exports = insight2png =
 
     chartTimeout = null
 
-    page.open url, (status) =>
+    page.open @url, (status) =>
       if status isnt "success"
         console.log "Unable to open URL."
-        return callbacks.error("Unable to open URL", response) if callbacks.error?
+        return callbacks.error("Unable to open URL", @response) if callbacks.error?
         slimer.exit 1
       else
         vis = page.evaluate ->
@@ -57,7 +59,7 @@ module.exports = insight2png =
           getImage()
 
 
-  renderPage: (page, filename) ->
+  renderPage: (page) ->
     page.evaluate ->
       # this is for smoothing over on xvfb; don't use if don't have to
       $('.user-name, .user-text').css('font-size', '14.25px')
@@ -82,16 +84,17 @@ module.exports = insight2png =
       height: crop.height
 
     console.log 'Rendering page'
-    page.render("screenshots/#{filename}")
+    console.log @filename
+    page.render("screenshots/#{@filename}")
     page.renderBase64('png')
 
-  readFile: (filename, response, callbacks={}) ->
+  readFile: (callbacks={}) ->
     start = new Date()
     page = webpage.create()
-    url = "#{fs.workingDirectory}/screenshots/#{filename}.png"
-    page.open url, (status) =>
+    @url = "#{fs.workingDirectory}/screenshots/#{@filename}"
+    page.open @url, (status) =>
       if status isnt "success"
-        return callback.error("Unable to open URL", response) if callbacks.error?
+        return callback.error("Unable to open URL", @response) if callbacks.error?
         slimer.exit 1
       else
         try
@@ -102,11 +105,11 @@ module.exports = insight2png =
 
           imgData = page.renderBase64('png')
           # @logTime(start)
-          return callbacks.success(imgData, response) if callbacks.success?
+          return callbacks.success(imgData, @response) if callbacks.success?
           slimer.exit 0
           return
         catch error
-          return callbacks.error(error, response) if callbacks.error?
+          return callbacks.error(error, @response) if callbacks.error?
 
   getImageDimensions: (page, selector) ->
     size = page.evaluate (selector) ->
@@ -128,4 +131,5 @@ unless system.args[0].match /server\.coffee/
   else
     url = system.args[1]
     filename = system.args[2]
-    insight2png.run(url, filename)
+    new Insight2png(url, filename).run()
+

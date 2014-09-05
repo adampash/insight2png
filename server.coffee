@@ -2,7 +2,7 @@
 
 system = require("system")
 server = require("webserver").create()
-insight2png = require 'insight2png'
+Insight2png = require 'insight2png'
 fs = require('fs')
 
 TU_REGEX = /^https:\/\/.+\.thinkup\.com\/\?u=/
@@ -22,13 +22,14 @@ server.listen "#{domain}:#{port}", (request, response) ->
     url = request.queryString.split('url=')[1]
     console.log url
     return fourOhFour(response, url) unless url? and url.match TU_REGEX
-    hashedUrl = hashCode(url)
-    if fs.exists "screenshots/#{hashedUrl}.png"
+    filename = "#{hashCode(url)}.png"
+    insight2png = new Insight2png(url, filename, response)
+    if fs.exists "screenshots/#{filename}"
       console.log "Screenshot exists; returning image"
-      insight2png.readFile hashedUrl, response, handleImageResponse
+      insight2png.readFile handleImageResponse
     else
-      console.log "First request; generating #{hashedUrl}.png"
-      insight2png.run url, "#{hashedUrl}.png", response, handleImageResponse
+      console.log "First request; generating #{filename}"
+      insight2png.run handleImageResponse
 
   else
     fourOhFour(response)
