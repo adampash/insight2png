@@ -19,7 +19,7 @@ server.listen "#{domain}:#{port}", (request, response) ->
   return if request.url is '/favicon.ico'
   response.start = new Date()
   if request.url.match /^\/insight/
-    url = request.queryString.split('url=')[1]
+    url = decodeURIComponent request.queryString.split('url=')[1]
     console.log url
     return fourOhFour(response, url) unless url? and url.match TU_REGEX
     filename = "#{hashCode(url)}.png"
