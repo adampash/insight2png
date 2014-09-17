@@ -21,7 +21,7 @@ server.listen "#{domain}:#{port}", (request, response) ->
   if request.url.match /^\/insight/
     url = decodeURIComponent request.queryString.split('url=')[1]
     console.log url
-    return fourOhFour(response, url) unless url? and url.match TU_REGEX
+    return fourOhFour(response, "Not an insight url") unless url? and url.match TU_REGEX
     filename = "#{hashCode(url)}.png"
     insight2png = new Insight2png(url, filename, response)
     if fs.exists "screenshots/#{filename}"
@@ -42,8 +42,8 @@ handleImageResponse =
   success: (imgData, response) ->
     writeImageToClient response, imgData
   error: (error, response) ->
-    console.log "Something went wrong: #{error}"
-    fourOhFour(response, error)
+    msg = error
+    fourOhFour(response, msg)
 
 
 writeImageToClient = (response, imgData) ->
@@ -53,12 +53,11 @@ writeImageToClient = (response, imgData) ->
   close(response)
 
 
-fourOhFour = (response, url="No url requested") ->
+fourOhFour = (response, msg="No url requested") ->
   console.log "404:"
-  console.log "Requested url:"
-  console.log "#{url}"
+  console.log "#{msg}"
   response.statusCode = 404
-  response.write('<!DOCTYPE html>\n<html><head><meta charset="utf-8"><title>404</title></head><body>404: Resource not found</body></html>')
+  response.write("<!DOCTYPE html>\n<html><head><meta charset=\"utf-8\"><title>404</title></head><body>404: #{msg}</body></html>")
   close(response)
 
 
