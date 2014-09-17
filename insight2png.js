@@ -39,9 +39,6 @@
       })(this);
       start = new Date();
       this.page = webpage.create();
-      this.page.onAlert = function(text) {
-        return console.log("Alert: " + text);
-      };
       this.page.viewportSize = {
         width: 800,
         height: 500
@@ -83,6 +80,11 @@
 
     Insight2png.prototype.renderPage = function() {
       var crop, offset;
+      if (!this.page.evaluate(function() {
+        return $('.insight').length;
+      })) {
+        throw "No insight on page";
+      }
       this.page.evaluate(function() {
         $('.user-name, .user-text').css('font-size', '14.25px');
         $('.panel-body-inner p').css('font-size', '14.25px');

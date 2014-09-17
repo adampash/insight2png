@@ -20,8 +20,8 @@ module.exports = class Insight2png
     @page = webpage.create()
 
     # below for debugging
-    @page.onAlert = (text) ->
-      console.log("Alert: " +text);
+    # @page.onAlert = (text) ->
+    #   console.log("Alert: " +text);
 
     @page.viewportSize =
       width: 800
@@ -56,6 +56,8 @@ module.exports = class Insight2png
 
 
   renderPage: ->
+    throw "No insight on page" unless @page.evaluate ->
+      $('.insight').length
     @page.evaluate ->
       # this is for smoothing over on xvfb; don't use if don't have to
       $('.user-name, .user-text').css('font-size', '14.25px')
@@ -110,7 +112,8 @@ module.exports = class Insight2png
   getImageDimensions: (selector) ->
     size = @page.evaluate (selector) ->
       insight = document.querySelector(selector)
-      throw "Insight not found on page" unless insight?
+      unless insight?
+        throw "Insight not found on page"
       offset =
         height: insight.offsetHeight
         width: insight.offsetWidth
