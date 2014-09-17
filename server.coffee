@@ -5,7 +5,7 @@ server = require("webserver").create()
 Insight2png = require 'insight2png'
 fs = require('fs')
 
-TU_REGEX = /^https:\/\/.+\.thinkup\.com\/\?u=/
+TU_REGEX = /^tu=.+&u=.+&n=.+&s=.+$/
 
 if system.args.length < 2 or system.args.length > 3
   domain = "localhost"
@@ -19,9 +19,12 @@ server.listen "#{domain}:#{port}", (request, response) ->
   return if request.url is '/favicon.ico'
   response.start = new Date()
   if request.url.match /^\/insight/
-    url = decodeURIComponent request.queryString.split('url=')[1]
+    params = decodeURIComponent request.queryString.split()
+    unless params? and params.match TU_REGEX
+      return fourOhFour(response, "Not a valid request")
+    tuUser = params.substr(3).split('&')[0]
+    url = "https://#{tuUser}.thinkup.com/?#{params.split("tu=#{tuUser}&")[1]}"
     console.log url
-    return fourOhFour(response, "Not an insight url") unless url? and url.match TU_REGEX
     filename = "#{hashCode(url)}.png"
     insight2png = new Insight2png(url, filename, response)
     if fs.exists "screenshots/#{filename}"
