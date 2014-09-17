@@ -129,6 +129,9 @@
           } else {
             try {
               size = _this.getImageDimensions('.decoded');
+              if (size == null) {
+                return callbacks("No image found on page", _this.response);
+              }
               _this.page.viewportSize = {
                 width: size.width,
                 height: size.height

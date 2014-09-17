@@ -97,6 +97,7 @@ module.exports = class Insight2png
       else
         try
           size = @getImageDimensions '.decoded'
+          return callbacks("No image found on page", @response) unless size?
           @page.viewportSize =
             width: size.width
             height: size.height
