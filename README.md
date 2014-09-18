@@ -37,19 +37,22 @@ This is the current configuration of the server:
 
 ```
 $ sudo -s
+# add-apt-repository ppa:vbernat/haproxy-1.5
 # apt-get update
 # apt-get -y dist-upgrade
 # dpkg-reconfigure tzdata
 	[America]
 	[New_York]
-# apt-get -y install libc6 libstdc++6 libgcc1 libgtk2.0-0 libasound2 libxrender1 git firefox xvfb
+# apt-get -y install libc6 libstdc++6 libgcc1 libgtk2.0-0 libasound2 libxrender1 git firefox xvfb haproxy
 # wget http://download.slimerjs.org/releases/0.9.2/slimerjs-0.9.2-linux-x86_64.tar.bz2
 # bzip2 -d slimerjs-0.9.2-linux-x86_64.tar.bz2
 # tar -xf slimerjs-0.9.2-linux-x86_64.tar
 # git clone https://github.com/adampash/insight2png.git i2p (Calling it "insight2png" confuses slimer's module loading)
 # export SLIMERJSLAUNCHER=/usr/bin/firefox
 # cp i2p/config/prefs.js slimerjs-0.9.2/defaults/preferences/prefs.js
-# cp i2p/init/insight2png.conf /etc/init
+# cp i2p/sys/etc/init/insight2png.conf /etc/init
+# ln -s i2p/sys/etc/haproxy/haproxy.cfg /etc/haproxy
+# service haproxy restart
 # start insight2png
 ```
 
