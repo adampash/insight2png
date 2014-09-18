@@ -27,7 +27,7 @@
             return imgData = _this.renderPage(_this.page, _this.filename);
           } catch (_error) {
             error = _error;
-            return _this.response.log += error;
+            return _this.response.error = error;
           } finally {
             if (imgData != null) {
               if (callbacks.success != null) {
@@ -35,6 +35,7 @@
               }
               slimer.exit(0);
             } else {
+              error = _this.response.error || "No insight on page";
               if (callbacks.error != null) {
                 return callbacks.error(error, _this.response);
               }
@@ -146,7 +147,7 @@
               return imgData = _this.page.renderBase64('png');
             } catch (_error) {
               error = _error;
-              return _this.response.log += error;
+              return _this.response.error = error;
             } finally {
               if (imgData != null) {
                 if (callbacks.success != null) {
@@ -154,6 +155,7 @@
                 }
                 slimer.exit(0);
               } else {
+                error = _this.response.error || "No image on page";
                 if (callbacks.error != null) {
                   return callbacks.error(error, _this.response);
                 }

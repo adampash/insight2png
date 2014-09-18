@@ -12,12 +12,13 @@ module.exports = class Insight2png
       try
         imgData = @renderPage @page, @filename
       catch error
-        @response.log += error
+        @response.error = error
       finally
         if imgData?
           return callbacks.success(imgData, @response) if callbacks.success?
           slimer.exit 0
         else
+          error = @response.error or "No insight on page"
           return callbacks.error(error, @response) if callbacks.error?
 
     start = new Date()
@@ -113,12 +114,13 @@ module.exports = class Insight2png
           imgData = @page.renderBase64('png')
           # @logTime(start)
         catch error
-          @response.log += error
+          @response.error = error
         finally
           if imgData?
             return callbacks.success(imgData, @response) if callbacks.success?
             slimer.exit 0
           else
+            error = @response.error or "No image on page"
             return callbacks.error(error, @response) if callbacks.error?
 
   getImageDimensions: (selector) ->

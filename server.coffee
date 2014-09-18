@@ -64,8 +64,7 @@ writeImageToClient = (response, imgData) ->
 
 fourOhFour = (response, msg="No url requested") ->
   response.log += "404:\n"
-  response.log += "#{msg}\n"
-  console.log response.log
+  response.log += "#{msg}"
   # console.log "404:"
   # console.log "#{msg}"
   response.statusCode = 404
