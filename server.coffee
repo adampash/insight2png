@@ -30,15 +30,15 @@ server.listen "#{domain}:#{port}", (request, response) ->
     # console.log url
     response.log += url + "\n"
     filename = "#{hashCode(url)}.png"
-    insight2png = new Insight2png(url, filename, response)
+    insight2png = new Insight2png(url, filename, response, handleImageResponse)
     if fs.exists "screenshots/#{filename}"
       # console.log "Screenshot exists; returning image"
       response.log += "Screenshot exists; returning image #{filename}"
-      insight2png.readFile handleImageResponse
+      insight2png.readFile()
     else
       # console.log "First request; generating #{filename}"
       response.log += "First request; generating #{filename}\n"
-      insight2png.run handleImageResponse
+      insight2png.run()
 
   else
     fourOhFour(response)

@@ -9,17 +9,15 @@
   fs = require("fs");
 
   module.exports = Insight2png = (function() {
-    function Insight2png(url, filename, response) {
+    function Insight2png(url, filename, response, callbacks) {
       this.url = url;
       this.filename = filename;
       this.response = response;
+      this.callbacks = callbacks;
     }
 
-    Insight2png.prototype.run = function(callbacks) {
+    Insight2png.prototype.run = function() {
       var chartTimeout, getImage, start;
-      if (callbacks == null) {
-        callbacks = {};
-      }
       getImage = (function(_this) {
         return function() {
           var error, imgData;
@@ -30,14 +28,14 @@
             return _this.response.error = error;
           } finally {
             if (imgData != null) {
-              if (callbacks.success != null) {
-                return callbacks.success(imgData, _this.response);
+              if (_this.callbacks.success != null) {
+                return _this.callbacks.success(imgData, _this.response);
               }
               slimer.exit(0);
             } else {
               error = _this.response.error || "No insight on page";
-              if (callbacks.error != null) {
-                return callbacks.error(error, _this.response);
+              if (_this.callbacks.error != null) {
+                return _this.callbacks.error(error, _this.response);
               }
             }
           }
@@ -68,8 +66,8 @@
           var vis;
           if (status !== "success") {
             _this.response.log += "Unable to open URL.\n";
-            if (callbacks.error != null) {
-              return callbacks.error("Unable to open URL", _this.response);
+            if (_this.callbacks.error != null) {
+              return _this.callbacks.error("Unable to open URL", _this.response);
             }
             return slimer.exit(1);
           } else {
@@ -118,11 +116,8 @@
       return this.page.renderBase64('png');
     };
 
-    Insight2png.prototype.readFile = function(callbacks) {
+    Insight2png.prototype.readFile = function() {
       var start;
-      if (callbacks == null) {
-        callbacks = {};
-      }
       start = new Date();
       this.page = webpage.create();
       this.url = "" + fs.workingDirectory + "/screenshots/" + this.filename;
@@ -130,15 +125,15 @@
         return function(status) {
           var error, imgData, size;
           if (status !== "success") {
-            if (callbacks.error != null) {
-              return callbacks.error("Unable to open URL", _this.response);
+            if (_this.callbacks.error != null) {
+              return _this.callbacks.error("Unable to open URL", _this.response);
             }
             return slimer.exit(1);
           } else {
             try {
               size = _this.getImageDimensions('.decoded');
-              if ((callbacks.error != null) && (size == null)) {
-                return callbacks.error("No image found on page", _this.response);
+              if ((_this.callbacks.error != null) && (size == null)) {
+                return _this.callbacks.error("No image found on page", _this.response);
               }
               _this.page.viewportSize = {
                 width: size.width,
@@ -150,14 +145,14 @@
               return _this.response.error = error;
             } finally {
               if (imgData != null) {
-                if (callbacks.success != null) {
-                  return callbacks.success(imgData, _this.response);
+                if (_this.callbacks.success != null) {
+                  return _this.callbacks.success(imgData, _this.response);
                 }
                 slimer.exit(0);
               } else {
                 error = _this.response.error || "No image on page";
-                if (callbacks.error != null) {
-                  return callbacks.error(error, _this.response);
+                if (_this.callbacks.error != null) {
+                  return _this.callbacks.error(error, _this.response);
                 }
               }
             }

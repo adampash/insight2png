@@ -5,9 +5,9 @@ system = require("system")
 fs = require("fs")
 
 module.exports = class Insight2png
-  constructor: (@url, @filename, @response) ->
+  constructor: (@url, @filename, @response, @callbacks) ->
 
-  run: (callbacks={}) ->
+  run: ->
     getImage = =>
       try
         imgData = @renderPage @page, @filename
@@ -15,11 +15,11 @@ module.exports = class Insight2png
         @response.error = error
       finally
         if imgData?
-          return callbacks.success(imgData, @response) if callbacks.success?
+          return @callbacks.success(imgData, @response) if @callbacks.success?
           slimer.exit 0
         else
           error = @response.error or "No insight on page"
-          return callbacks.error(error, @response) if callbacks.error?
+          return @callbacks.error(error, @response) if @callbacks.error?
 
     start = new Date()
     @page = webpage.create()
@@ -51,7 +51,7 @@ module.exports = class Insight2png
       if status isnt "success"
         # console.log "Unable to open URL."
         @response.log += "Unable to open URL.\n"
-        return callbacks.error("Unable to open URL", @response) if callbacks.error?
+        return @callbacks.error("Unable to open URL", @response) if @callbacks.error?
         slimer.exit 1
       else
         vis = @page.evaluate ->
@@ -95,18 +95,18 @@ module.exports = class Insight2png
     @page.render("screenshots/#{@filename}")
     @page.renderBase64('png')
 
-  readFile: (callbacks={}) ->
+  readFile: ->
     start = new Date()
     @page = webpage.create()
     @url = "#{fs.workingDirectory}/screenshots/#{@filename}"
     @page.open @url, (status) =>
       if status isnt "success"
-        return callbacks.error("Unable to open URL", @response) if callbacks.error?
+        return @callbacks.error("Unable to open URL", @response) if @callbacks.error?
         slimer.exit 1
       else
         try
           size = @getImageDimensions '.decoded'
-          return callbacks.error("No image found on page", @response) if callbacks.error? and !size?
+          return @callbacks.error("No image found on page", @response) if @callbacks.error? and !size?
           @page.viewportSize =
             width: size.width
             height: size.height
@@ -117,11 +117,11 @@ module.exports = class Insight2png
           @response.error = error
         finally
           if imgData?
-            return callbacks.success(imgData, @response) if callbacks.success?
+            return @callbacks.success(imgData, @response) if @callbacks.success?
             slimer.exit 0
           else
             error = @response.error or "No image on page"
-            return callbacks.error(error, @response) if callbacks.error?
+            return @callbacks.error(error, @response) if @callbacks.error?
 
   getImageDimensions: (selector) ->
     size = @page.evaluate (selector) ->
