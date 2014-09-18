@@ -43,17 +43,19 @@
         width: 800,
         height: 500
       };
-      this.page.onCallback = function() {
-        clearTimeout(chartTimeout);
-        this.response.log += "Visualization loaded\n";
-        if (this.url.match(/weekly_graph$/)) {
-          return setTimeout(function() {
+      this.page.onCallback = (function(_this) {
+        return function() {
+          clearTimeout(chartTimeout);
+          _this.response.log += "Visualization loaded\n";
+          if (_this.url.match(/weekly_graph$/)) {
+            return setTimeout(function() {
+              return getImage();
+            }, 1500);
+          } else {
             return getImage();
-          }, 1500);
-        } else {
-          return getImage();
-        }
-      };
+          }
+        };
+      })(this);
       chartTimeout = null;
       return this.page.open(this.url, (function(_this) {
         return function(status) {

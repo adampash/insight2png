@@ -29,7 +29,7 @@ module.exports = class Insight2png
 
     # this callback is only triggered
     # for insights with visualizations
-    @page.onCallback = ->
+    @page.onCallback = =>
       clearTimeout chartTimeout
       @response.log += "Visualization loaded\n"
       # console.log "Visualization loaded"
