@@ -62,7 +62,7 @@ module.exports = class Insight2png
 
 
   renderPage: ->
-    throw "No insight on page" unless @page.evaluate ->
+    return null unless @page.evaluate ->
       $('.insight').length
     @page.evaluate ->
       # this is for smoothing over on xvfb; don't use if don't have to

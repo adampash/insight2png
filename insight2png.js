@@ -90,7 +90,7 @@
       if (!this.page.evaluate(function() {
         return $('.insight').length;
       })) {
-        throw "No insight on page";
+        return null;
       }
       this.page.evaluate(function() {
         $('.user-name, .user-text').css('font-size', '14.25px');
