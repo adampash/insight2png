@@ -23,6 +23,8 @@ server.listen "#{domain}:#{port}", (request, response) ->
     unless params? and params.match TU_REGEX
       return fourOhFour(response, "Not a valid request")
     tuUser = params.substr(3).split('&')[0]
+    if tuUser is 'shares' or tuUser is ''
+      return fourOhFour(response, "\"#{tuUser}\" is not a valid user")
     url = "https://#{tuUser}.thinkup.com/?#{params.split("tu=#{tuUser}&")[1]}"
     console.log url
     filename = "#{hashCode(url)}.png"
