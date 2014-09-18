@@ -5,7 +5,7 @@ server = require("webserver").create()
 Insight2png = require 'insight2png'
 fs = require('fs')
 
-TU_REGEX = /^tu=.+&u=.+&n=.+&d=.+&s=.+$/
+TU_REGEX = /^tu=.+&u=.+&n=.+&d=.+&s=.+&share=1$/
 
 if system.args.length < 2 or system.args.length > 3
   domain = "localhost"
