@@ -92,12 +92,12 @@ module.exports = class Insight2png
     @url = "#{fs.workingDirectory}/screenshots/#{@filename}"
     @page.open @url, (status) =>
       if status isnt "success"
-        return callback.error("Unable to open URL", @response) if callbacks.error?
+        return callbacks.error("Unable to open URL", @response) if callbacks.error?
         slimer.exit 1
       else
         try
           size = @getImageDimensions '.decoded'
-          return callbacks("No image found on page", @response) unless size?
+          return callbacks.error("No image found on page", @response) if callbacks.error? and !size?
           @page.viewportSize =
             width: size.width
             height: size.height
