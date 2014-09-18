@@ -31,7 +31,8 @@ module.exports = class Insight2png
     # for insights with visualizations
     @page.onCallback = ->
       clearTimeout chartTimeout
-      console.log "Visualization loaded"
+      @response.log += "Visualization loaded\n"
+      # console.log "Visualization loaded"
       if @url.match /weekly_graph$/
         setTimeout ->
           getImage()
@@ -43,7 +44,8 @@ module.exports = class Insight2png
 
     @page.open @url, (status) =>
       if status isnt "success"
-        console.log "Unable to open URL."
+        # console.log "Unable to open URL."
+        @response.log += "Unable to open URL.\n"
         return callbacks.error("Unable to open URL", @response) if callbacks.error?
         slimer.exit 1
       else
@@ -81,8 +83,10 @@ module.exports = class Insight2png
       width: crop.width
       height: crop.height
 
-    console.log 'Rendering page'
-    console.log @filename
+    @response.log += 'Rendering page: '
+    @response.log += @filename
+    # console.log 'Rendering page'
+    # console.log @filename
     @page.render("screenshots/#{@filename}")
     @page.renderBase64('png')
 

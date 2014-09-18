@@ -18,6 +18,7 @@ console.log "Server is running on #{domain}:#{port}\n"
 server.listen "#{domain}:#{port}", (request, response) ->
   return if request.url is '/favicon.ico'
   response.start = new Date()
+  response.log = ''
   if request.url.match /^\/insight/
     params = decodeURIComponent request.queryString.split()
     unless params? and params.match TU_REGEX
@@ -26,14 +27,17 @@ server.listen "#{domain}:#{port}", (request, response) ->
     if tuUser is 'shares' or tuUser is ''
       return fourOhFour(response, "\"#{tuUser}\" is not a valid user")
     url = "https://#{tuUser}.thinkup.com/?#{params.split("tu=#{tuUser}&")[1]}"
-    console.log url
+    # console.log url
+    response.log += url + "\n"
     filename = "#{hashCode(url)}.png"
     insight2png = new Insight2png(url, filename, response)
     if fs.exists "screenshots/#{filename}"
-      console.log "Screenshot exists; returning image"
+      # console.log "Screenshot exists; returning image"
+      response.log += "Screenshot exists; returning image #{filename}"
       insight2png.readFile handleImageResponse
     else
-      console.log "First request; generating #{filename}"
+      # console.log "First request; generating #{filename}"
+      response.log += "First request; generating #{filename}\n"
       insight2png.run handleImageResponse
 
   else
@@ -59,14 +63,18 @@ writeImageToClient = (response, imgData) ->
 
 
 fourOhFour = (response, msg="No url requested") ->
-  console.log "404:"
-  console.log "#{msg}"
+  response.log += "404:\n"
+  response.log += "#{msg}\n"
+  console.log response.log
+  # console.log "404:"
+  # console.log "#{msg}"
   response.statusCode = 404
   response.write("<!DOCTYPE html>\n<html><head><meta charset=\"utf-8\"><title>404</title></head><body>404: #{msg}</body></html>")
   close(response)
 
 
 close = (response) ->
+  console.log response.log
   logTime(response.start)
   response.close()
 

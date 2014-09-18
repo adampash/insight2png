@@ -45,7 +45,7 @@
       };
       this.page.onCallback = function() {
         clearTimeout(chartTimeout);
-        console.log("Visualization loaded");
+        this.response.log += "Visualization loaded\n";
         if (this.url.match(/weekly_graph$/)) {
           return setTimeout(function() {
             return getImage();
@@ -59,7 +59,7 @@
         return function(status) {
           var vis;
           if (status !== "success") {
-            console.log("Unable to open URL.");
+            _this.response.log += "Unable to open URL.\n";
             if (callbacks.error != null) {
               return callbacks.error("Unable to open URL", _this.response);
             }
@@ -104,8 +104,8 @@
         width: crop.width,
         height: crop.height
       };
-      console.log('Rendering page');
-      console.log(this.filename);
+      this.response.log += 'Rendering page: ';
+      this.response.log += this.filename;
       this.page.render("screenshots/" + this.filename);
       return this.page.renderBase64('png');
     };
