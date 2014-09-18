@@ -24,15 +24,20 @@
         return function() {
           var error, imgData;
           try {
-            imgData = _this.renderPage(_this.page, _this.filename);
-            if (callbacks.success != null) {
-              return callbacks.success(imgData, _this.response);
-            }
-            return slimer.exit(0);
+            return imgData = _this.renderPage(_this.page, _this.filename);
           } catch (_error) {
             error = _error;
-            if (callbacks.error != null) {
-              return callbacks.error(error, _this.response);
+            return _this.response.log += error;
+          } finally {
+            if (imgData != null) {
+              if (callbacks.success != null) {
+                return callbacks.success(imgData, _this.response);
+              }
+              slimer.exit(0);
+            } else {
+              if (callbacks.error != null) {
+                return callbacks.error(error, _this.response);
+              }
             }
           }
         };
@@ -100,6 +105,9 @@
         return $('.insight').offset();
       });
       crop = this.getImageDimensions('.insight');
+      if ((callbacks.error != null) && (crop == null)) {
+        return callbacks.error("No insight found on page", this.response);
+      }
       this.page.clipRect = {
         top: offset.top,
         left: offset.left,
@@ -138,15 +146,20 @@
                 width: size.width,
                 height: size.height
               };
-              imgData = _this.page.renderBase64('png');
-              if (callbacks.success != null) {
-                return callbacks.success(imgData, _this.response);
-              }
-              slimer.exit(0);
+              return imgData = _this.page.renderBase64('png');
             } catch (_error) {
               error = _error;
-              if (callbacks.error != null) {
-                return callbacks.error(error, _this.response);
+              return _this.response.log += error;
+            } finally {
+              if (imgData != null) {
+                if (callbacks.success != null) {
+                  return callbacks.success(imgData, _this.response);
+                }
+                slimer.exit(0);
+              } else {
+                if (callbacks.error != null) {
+                  return callbacks.error(error, _this.response);
+                }
               }
             }
           }
@@ -160,7 +173,7 @@
         var insight, offset;
         insight = document.querySelector(selector);
         if (insight == null) {
-          throw "Insight not found on page";
+          return null;
         }
         return offset = {
           height: insight.offsetHeight,

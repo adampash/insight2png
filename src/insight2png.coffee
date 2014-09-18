@@ -11,10 +11,14 @@ module.exports = class Insight2png
     getImage = =>
       try
         imgData = @renderPage @page, @filename
-        return callbacks.success(imgData, @response) if callbacks.success?
-        slimer.exit 0
       catch error
-        return callbacks.error(error, @response) if callbacks.error?
+        @response.log += error
+      finally
+        if imgData?
+          return callbacks.success(imgData, @response) if callbacks.success?
+          slimer.exit 0
+        else
+          return callbacks.error(error, @response) if callbacks.error?
 
     start = new Date()
     @page = webpage.create()
@@ -76,6 +80,7 @@ module.exports = class Insight2png
       $('.insight').offset()
 
     crop = @getImageDimensions '.insight'
+    return callbacks.error("No insight found on page", @response) if callbacks.error? and !crop?
 
     @page.clipRect =
       top: offset.top
@@ -108,17 +113,20 @@ module.exports = class Insight2png
 
           imgData = @page.renderBase64('png')
           # @logTime(start)
-          return callbacks.success(imgData, @response) if callbacks.success?
-          slimer.exit 0
-          return
         catch error
-          return callbacks.error(error, @response) if callbacks.error?
+          @response.log += error
+        finally
+          if imgData?
+            return callbacks.success(imgData, @response) if callbacks.success?
+            slimer.exit 0
+          else
+            return callbacks.error(error, @response) if callbacks.error?
 
   getImageDimensions: (selector) ->
     size = @page.evaluate (selector) ->
       insight = document.querySelector(selector)
       unless insight?
-        throw "Insight not found on page"
+        return null
       offset =
         height: insight.offsetHeight
         width: insight.offsetWidth
