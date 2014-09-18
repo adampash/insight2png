@@ -105,9 +105,6 @@
         return $('.insight').offset();
       });
       crop = this.getImageDimensions('.insight');
-      if ((callbacks.error != null) && (crop == null)) {
-        return callbacks.error("No insight found on page", this.response);
-      }
       this.page.clipRect = {
         top: offset.top,
         left: offset.left,

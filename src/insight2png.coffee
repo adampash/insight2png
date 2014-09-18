@@ -80,7 +80,6 @@ module.exports = class Insight2png
       $('.insight').offset()
 
     crop = @getImageDimensions '.insight'
-    return callbacks.error("No insight found on page", @response) if callbacks.error? and !crop?
 
     @page.clipRect =
       top: offset.top
