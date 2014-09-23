@@ -6,6 +6,7 @@ Insight2png = require 'insight2png'
 fs = require('fs')
 
 TU_REGEX = /^tu=.+&u=.+&n=.+&d=.+&s=.+&share=1$/
+TESTER_REGEX = /^headline=.+&body=.+&preview=1$/
 
 if system.args.length < 2 or system.args.length > 3
   domain = "localhost"
@@ -21,13 +22,15 @@ server.listen "#{domain}:#{port}", (request, response) ->
   response.log = ''
   if request.url.match /^\/insight/
     params = decodeURIComponent request.queryString.split()
-    unless params? and params.match TU_REGEX
+    unless params? and (params.match(TU_REGEX)!=null or params.match(TESTER_REGEX)!=null)
       return fourOhFour(response, "Not a valid request")
-    tuUser = params.substr(3).split('&')[0]
-    if tuUser is 'shares' or tuUser is ''
-      return fourOhFour(response, "\"#{tuUser}\" is not a valid user")
-    url = "https://#{tuUser}.thinkup.com/?#{params.split("tu=#{tuUser}&")[1]}"
-    # console.log url
+    if params.match TU_REGEX
+      tuUser = params.substr(3).split('&')[0]
+      if tuUser is 'shares' or tuUser is ''
+        return fourOhFour(response, "\"#{tuUser}\" is not a valid user")
+      url = "https://#{tuUser}.thinkup.com/?#{params.split("tu=#{tuUser}&")[1]}"
+    else if params.match TESTER_REGEX
+      url = "https://thinkup.thinkup.com/insight_tester.html?#{params}"
     response.log += url + "\n"
     filename = "#{hashCode(url)}.png"
     insight2png = new Insight2png(url, filename, response, handleImageResponse)
