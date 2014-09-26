@@ -55,6 +55,10 @@
             return setTimeout(function() {
               return getImage();
             }, 1500);
+          } else if (_this.url.match(/insight_tester.+&preview=1/)) {
+            return setTimeout(function() {
+              return getImage();
+            }, 100);
           } else {
             return getImage();
           }

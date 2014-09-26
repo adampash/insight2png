@@ -42,6 +42,10 @@ module.exports = class Insight2png
         setTimeout ->
           getImage()
         , 1500
+      else if @url.match /insight_tester.+&preview=1/
+        setTimeout ->
+          getImage()
+        , 100
       else
         getImage()
 
