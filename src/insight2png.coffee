@@ -25,8 +25,8 @@ module.exports = class Insight2png
     @page = webpage.create()
 
     # below for debugging
-    @page.onAlert = (text) ->
-      console.log("Alert: " +text);
+    # @page.onAlert = (text) ->
+    #   console.log("Alert: " +text);
 
     @page.viewportSize =
       width: 800
@@ -72,11 +72,11 @@ module.exports = class Insight2png
     @page.evaluate ->
       # add brand to insight
       brand = $('a.navbar-brand').css('background-image').substr(5).replace(/"\)$/, '')
+      if $('.insight').height() - $('.preview-headline').height() < 30
+        $('.panel-title').height($('.panel-title').height() + 30)
+      height = $('.insight').height() - 27
       # bottom left
-      $('.panel').append($("<img class=\"insight-brand\" style=\"height:18px; float:left; margin: -25px 0 0 10px\" src=\"#{brand}\" />"))
-      jQuery.fn.outerHTML = ->
-        jQuery('<div />').append(this.eq(0).clone()).html()
-      alert $('.insight-brand').outerHTML()
+      $('.panel-heading').append($("<img class=\"insight-brand\" style=\"height:18px; position: absolute; top: #{height}px;\" src=\"#{brand}\" />"))
       # this is for smoothing over on xvfb; don't use if don't have to
       $('.user-name, .user-text').css('font-size', '14.25px')
       $('.panel-body-inner p').css('font-size', '14.25px')
