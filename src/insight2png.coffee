@@ -80,6 +80,9 @@ module.exports = class Insight2png
       # $('.panel-body-inner').css('font-size', '16px')
       $('.insight-metadata').css('font-size', '12.5px')
       $('.tweet-action.tweet-action-permalink').css('font-size', '12.5px')
+      brand = $('a.navbar-brand').css('background-image').substr(4).replace(/\)$/, '')
+      # bottom left
+      $('.panel').append($('<img style="height:18px; float:left; margin: -25px 0 0 10px" src="' + brand + '" />'))
 
     offset = @page.evaluate ->
       $('.insight').offset()
