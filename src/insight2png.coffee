@@ -71,7 +71,7 @@ module.exports = class Insight2png
       $('.insight').length
     @page.evaluate ->
       # add brand to insight
-      brand = $('a.navbar-brand').css('background-image').substr(5).replace(/"\)$/, '')
+      brand = "https://thinkup.thinkup.com/assets/img/thinkup-logo-white.png"
       if $('.insight').height() - $('.preview-headline').height() < 30
         $('.panel-title').height($('.panel-title').height() + 30)
       height = $('.insight').height() - 27

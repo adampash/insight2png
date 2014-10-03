@@ -97,7 +97,7 @@
       }
       this.page.evaluate(function() {
         var brand, height;
-        brand = $('a.navbar-brand').css('background-image').substr(5).replace(/"\)$/, '');
+        brand = "https://thinkup.thinkup.com/assets/img/thinkup-logo-white.png";
         if ($('.insight').height() - $('.preview-headline').height() < 30) {
           $('.panel-title').height($('.panel-title').height() + 30);
         }
