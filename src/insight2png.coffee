@@ -60,7 +60,7 @@ module.exports = class Insight2png
       else
         vis = @page.evaluate ->
           google.visualization
-        if vis?
+        if vis? or @url.match /insight_tester.+&preview=1/
           chartTimeout = setTimeout getImage, 6e3
         else
           getImage()
