@@ -43,6 +43,9 @@
       })(this);
       start = new Date();
       this.page = webpage.create();
+      this.page.onAlert = function(text) {
+        return console.log("Alert: " + text);
+      };
       this.page.viewportSize = {
         width: 800,
         height: 500
@@ -97,15 +100,19 @@
       }
       this.page.evaluate(function() {
         var brand;
+        brand = $('a.navbar-brand').css('background-image').substr(5).replace(/"\)$/, '');
+        $('.panel').append($("<img class=\"insight-brand\" style=\"height:18px; float:left; margin: -25px 0 0 10px\" src=\"" + brand + "\" />"));
+        jQuery.fn.outerHTML = function() {
+          return jQuery('<div />').append(this.eq(0).clone()).html();
+        };
+        alert($('.insight-brand').outerHTML());
         $('.user-name, .user-text').css('font-size', '14.25px');
         $('.panel-body-inner p').css('font-size', '14.25px');
         $('.panel-title').css('font-weight', 'bold');
         $('.panel-subtitle').css('font-weight', 'lighter').css('font-size', '14.5px');
         $('body').css('font', 'helvetica');
         $('.insight-metadata').css('font-size', '12.5px');
-        $('.tweet-action.tweet-action-permalink').css('font-size', '12.5px');
-        brand = $('a.navbar-brand').css('background-image').substr(4).replace(/\)$/, '');
-        return $('.panel').append($('<img style="height:18px; float:left; margin: -25px 0 0 10px" src="' + brand + '" />'));
+        return $('.tweet-action.tweet-action-permalink').css('font-size', '12.5px');
       });
       offset = this.page.evaluate(function() {
         return $('.insight').offset();

@@ -25,8 +25,8 @@ module.exports = class Insight2png
     @page = webpage.create()
 
     # below for debugging
-    # @page.onAlert = (text) ->
-    #   console.log("Alert: " +text);
+    @page.onAlert = (text) ->
+      console.log("Alert: " +text);
 
     @page.viewportSize =
       width: 800
@@ -70,6 +70,13 @@ module.exports = class Insight2png
     return null unless @page.evaluate ->
       $('.insight').length
     @page.evaluate ->
+      # add brand to insight
+      brand = $('a.navbar-brand').css('background-image').substr(5).replace(/"\)$/, '')
+      # bottom left
+      $('.panel').append($("<img class=\"insight-brand\" style=\"height:18px; float:left; margin: -25px 0 0 10px\" src=\"#{brand}\" />"))
+      jQuery.fn.outerHTML = ->
+        jQuery('<div />').append(this.eq(0).clone()).html()
+      alert $('.insight-brand').outerHTML()
       # this is for smoothing over on xvfb; don't use if don't have to
       $('.user-name, .user-text').css('font-size', '14.25px')
       $('.panel-body-inner p').css('font-size', '14.25px')
@@ -80,9 +87,6 @@ module.exports = class Insight2png
       # $('.panel-body-inner').css('font-size', '16px')
       $('.insight-metadata').css('font-size', '12.5px')
       $('.tweet-action.tweet-action-permalink').css('font-size', '12.5px')
-      brand = $('a.navbar-brand').css('background-image').substr(4).replace(/\)$/, '')
-      # bottom left
-      $('.panel').append($('<img style="height:18px; float:left; margin: -25px 0 0 10px" src="' + brand + '" />'))
 
     offset = @page.evaluate ->
       $('.insight').offset()
