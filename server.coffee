@@ -30,7 +30,7 @@ server.listen "#{domain}:#{port}", (request, response) ->
         return fourOhFour(response, "\"#{tuUser}\" is not a valid user")
       url = "https://#{tuUser}.thinkup.com/?#{params.split("tu=#{tuUser}&")[1]}"
     else if params.match TESTER_REGEX
-      url = "https://thinkup.thinkup.com/insight_tester.html?#{params}"
+      url = "https://thinkup.thinkup.com/insight_tester.php?#{params}"
     response.log += url + "\n"
     filename = "#{hashCode(url)}.png"
     insight2png = new Insight2png(url, filename, response, handleImageResponse)
