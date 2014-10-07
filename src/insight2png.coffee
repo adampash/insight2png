@@ -70,15 +70,6 @@ module.exports = class Insight2png
     return null unless @page.evaluate ->
       $('.insight').length
     @page.evaluate ->
-      # add brand to insight
-      brand = "https://thinkup.thinkup.com/assets/img/thinkup-logo-white.png"
-      if $('.insight').height() - $('.preview-headline').height() < 50
-        $('.panel-title').height($('.panel-title').height() + 50)
-      height = $('.insight').height() - 37
-      brandContainer = """
-        <div style="position:absolute; top: #{height}px; height: 40px;background: rgba(0, 0, 0, 0.1);width: 100%;left: 0;right: 0;">  <img class="insight-brand" style="height: 22px; position: absolute; top: 11px; left: 10px;" src="https://thinkup.thinkup.com/assets/img/thinkup-logo-white.png"></div>
-      """
-      $('.panel-heading').append($(brandContainer))
       # this is for smoothing over on xvfb; don't use if don't have to
       $('.user-name, .user-text').css('font-size', '14.25px')
       $('.panel-body-inner p').css('font-size', '14.25px')
@@ -89,6 +80,16 @@ module.exports = class Insight2png
       # $('.panel-body-inner').css('font-size', '16px')
       $('.insight-metadata').css('font-size', '12.5px')
       $('.tweet-action.tweet-action-permalink').css('font-size', '12.5px')
+
+      # add brand to insight
+      brand = "https://thinkup.thinkup.com/assets/img/thinkup-logo-white.png"
+      if $('.insight').height() - $('.preview-headline').height() < 50
+        $('.panel-title').height($('.panel-title').height() + 50)
+      height = $('.panel-footer').position().top
+      brandContainer = """
+        <div style="position:absolute; top: #{height}px; height: 40px;background: rgba(0, 0, 0, 0.1);width: 100%;left: 0;right: 0;">  <img class="insight-brand" style="height: 22px; position: absolute; top: 11px; left: 10px;" src="https://thinkup.thinkup.com/assets/img/thinkup-logo-white.png"></div>
+      """
+      $('.panel-heading').append($(brandContainer))
 
     offset = @page.evaluate ->
       $('.insight').offset()
