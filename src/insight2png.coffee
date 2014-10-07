@@ -72,11 +72,13 @@ module.exports = class Insight2png
     @page.evaluate ->
       # add brand to insight
       brand = "https://thinkup.thinkup.com/assets/img/thinkup-logo-white.png"
-      if $('.insight').height() - $('.preview-headline').height() < 30
-        $('.panel-title').height($('.panel-title').height() + 30)
-      height = $('.insight').height() - 27
-      # bottom left
-      $('.panel-heading').append($("<img class=\"insight-brand\" style=\"height:18px; position: absolute; top: #{height}px;\" src=\"#{brand}\" />"))
+      if $('.insight').height() - $('.preview-headline').height() < 50
+        $('.panel-title').height($('.panel-title').height() + 50)
+      height = $('.insight').height() - 36
+      brandContainer = """
+        <div style="position:absolute; top: #{height}px; height: 38px;background: rgba(0, 0, 0, 0.1);width: 100%;left: 0;right: 0;">  <img class="insight-brand" style="height: 22px; position: absolute; top: 10px; left: 10px;" src="https://thinkup.thinkup.com/assets/img/thinkup-logo-white.png"></div>
+      """
+      $('.panel-heading').append($(brandContainer))
       # this is for smoothing over on xvfb; don't use if don't have to
       $('.user-name, .user-text').css('font-size', '14.25px')
       $('.panel-body-inner p').css('font-size', '14.25px')
