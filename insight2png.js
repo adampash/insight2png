@@ -97,20 +97,20 @@
       }
       this.page.evaluate(function() {
         var brand, brandContainer, height;
-        brand = "https://thinkup.thinkup.com/assets/img/thinkup-logo-white.png";
-        if ($('.insight').height() - $('.preview-headline').height() < 50) {
-          $('.panel-title').height($('.panel-title').height() + 50);
-        }
-        height = $('.insight').height() - 36;
-        brandContainer = "<div style=\"position:absolute; top: " + height + "px; height: 38px;background: rgba(0, 0, 0, 0.1);width: 100%;left: 0;right: 0;\">  <img class=\"insight-brand\" style=\"height: 22px; position: absolute; top: 10px; left: 10px;\" src=\"https://thinkup.thinkup.com/assets/img/thinkup-logo-white.png\"></div>";
-        $('.panel-heading').append($(brandContainer));
         $('.user-name, .user-text').css('font-size', '14.25px');
         $('.panel-body-inner p').css('font-size', '14.25px');
         $('.panel-title').css('font-weight', 'bold');
         $('.panel-subtitle').css('font-weight', 'lighter').css('font-size', '14.5px');
         $('body').css('font', 'helvetica');
         $('.insight-metadata').css('font-size', '12.5px');
-        return $('.tweet-action.tweet-action-permalink').css('font-size', '12.5px');
+        $('.tweet-action.tweet-action-permalink').css('font-size', '12.5px');
+        brand = "https://thinkup.thinkup.com/assets/img/thinkup-logo-white.png";
+        if ($('.insight').height() - $('.preview-headline').height() < 50) {
+          $('.panel-title').height($('.panel-title').height() + 50);
+        }
+        height = $('.panel-footer').position().top;
+        brandContainer = "<div style=\"position:absolute; top: " + height + "px; height: 40px;background: rgba(0, 0, 0, 0.1);width: 100%;left: 0;right: 0;\">  <img class=\"insight-brand\" style=\"height: 22px; position: absolute; top: 11px; left: 10px;\" src=\"https://thinkup.thinkup.com/assets/img/thinkup-logo-white.png\"></div>";
+        return $('.panel-heading').append($(brandContainer));
       });
       offset = this.page.evaluate(function() {
         return $('.insight').offset();
