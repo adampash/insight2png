@@ -104,6 +104,7 @@
         $('body').css('font', 'helvetica');
         $('.insight-metadata').css('font-size', '12.5px');
         $('.tweet-action.tweet-action-permalink').css('font-size', '12.5px');
+        $('.userpic-featured').css('z-index', 10);
         brand = "https://thinkup.thinkup.com/assets/img/thinkup-logo-white.png";
         if ($('.insight').height() - $('.preview-headline').height() < 50) {
           $('.panel-title').height($('.panel-title').height() + 50);

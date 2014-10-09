@@ -80,6 +80,7 @@ module.exports = class Insight2png
       # $('.panel-body-inner').css('font-size', '16px')
       $('.insight-metadata').css('font-size', '12.5px')
       $('.tweet-action.tweet-action-permalink').css('font-size', '12.5px')
+      $('.userpic-featured').css('z-index', 10)
 
       # add brand to insight
       brand = "https://thinkup.thinkup.com/assets/img/thinkup-logo-white.png"
