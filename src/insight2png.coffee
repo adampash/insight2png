@@ -84,7 +84,7 @@ module.exports = class Insight2png
 
       # add brand to insight
       brand = "https://thinkup.thinkup.com/assets/img/thinkup-logo-white.png"
-      if $('.insight').height() - $('.preview-headline').height() < 50
+      if $('.insight').height() - $('.panel-title').height() < 50
         $('.panel-title').height($('.panel-title').height() + 50)
       height = $('.panel-footer').position().top
       brandContainer = """
